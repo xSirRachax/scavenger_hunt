@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Python Scavenger Hunt</title>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+</head>
+<body>
+<h2>Fix the code to get your clue!</h2>
+
+<textarea id="codeArea" rows="25" cols="85">
+jumble =  ("tlcebdygijnpebvteplebzlrwhnvwgbqvxiiuhrzx"
+           "xzgjpurquuyfiqrccdzpofwcylhlchjgotghhndyk"
+           "hhlnlodigmkxufmnijaqbdjudgjiezftzgppkqjhe"
+           "tckyebeshjhgitjazeobajhqvdumjgraxabotksoi"
+           "afsownfyathsdqfcpfpecqunodtyxjjhadttaqhot"
+           "juaeudpltqcvrhdzngbysavegpgeixplgvkiceujd"
+           "cxaffgi")
+    
+    
+#        There are certain moments that seem to freese in time 
+#        the kind that only come once, when the lights are brightest 
+#        and everything you thought was over suddenly isn’t. 
+#        For us, faith has always mattered; being Christian isn’t just a label, 
+#        it’s the thread that runs underneath everything else. 
+#        Some things stick for reasons deeper than others; 
+#        Crowns and rings, carried as a weight on the back of a goat
+#        yet it was always behind us, hidden in plain sight.
+
+
+# Extract every ?? character
+clue = "".join([jumble[i] for i in range(0, len(jumble), ??)])
+
+print(clue)
+
+</textarea>
+<br><br>
+
+<button onclick="runPython()">Run Python Code</button>
+
+<pre id="output"></pre>
+
+<script>
+let pyodideReady = false;
+
+async function loadPyodideAndPackages() {
+    window.pyodide = await loadPyodide();
+    pyodideReady = true;
+}
+loadPyodideAndPackages();
+
+async function runPython() {
+    if (!pyodideReady) {
+        alert("Python is still loading. Please wait a few seconds.");
+        return;
+    }
+
+    const code = document.getElementById("codeArea").value;
+
+    try {
+        // Capture stdout and stderr
+        let output = await pyodide.runPythonAsync(`
+import sys
+import io
+_output = io.StringIO()
+sys.stdout = _output
+sys.stderr = _output
+
+${code}
+
+_output.getvalue()
+        `);
+        document.getElementById("output").textContent = output;
+    } catch (e) {
+        document.getElementById("output").textContent = "Fatal Error: " + e;
+    }
+}
+
+</script>
+</body>
+</html>
